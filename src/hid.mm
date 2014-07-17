@@ -45,6 +45,7 @@ static CFStringRef Copy_DeviceName(IOHIDDeviceRef inDeviceRef){
 			// try the vendor ID source
 			manCFStringRef = IOHIDDevice_GetVendorIDSource(inDeviceRef);
 		}
+
 		if(!manCFStringRef){
 			// use the vendor ID to make a manufacturer string
 			long vendorID = IOHIDDevice_GetVendorID(inDeviceRef);
@@ -79,8 +80,17 @@ static CFStringRef Copy_DeviceName(IOHIDDeviceRef inDeviceRef){
 			CFRelease(prodCFStringRef);
 		}
 	}
+	
+//	CFShowStr(result);
+	
 	return result;
 }   // Copy_DeviceName
+
+static int Device_GetInputSize(IOHIDDeviceRef inDeviceRef)
+{
+	CFStringRef inputReportSize = IOHIDDevice_GetMaxInputReportSize(inDeviceRef);
+	return [inputReportSize intValue];
+}
 
 
 // HID Input Report callback
@@ -92,9 +102,9 @@ static void Handle_IOInputReport(void * inContext, IOReturn inResult, void * inS
 	#if DEBUG_USB_DATA
 		//print whole report
 		for(int i = 0; i < reportlen; i++){
-			printf("%x", p[i]);
+			printf("%x ", p[i]);
 		}
-		printf("\n");
+		printf(" (%ld)\n", reportlen);
 	#endif
 
 	switch (appDelegate->frameType) {
@@ -126,6 +136,75 @@ static void Handle_IOInputReport(void * inContext, IOReturn inResult, void * inS
 		p += 6;
 	}
 
+	[appDelegate touchesUpdated: &touchData]; //let the app know!
+}
+
+// HID Input Report callback
+static void Handle_3M_IOInputReport(void * inContext, IOReturn inResult, void * inSender,
+								 IOHIDReportType inType, uint32_t inReportID,
+								 uint8_t * inReport, CFIndex reportlen){
+	uint8_t * p = inReport;
+	
+#if DEBUG_USB_DATA
+	//print whole report
+	for(int i = 0; i < reportlen; i++){
+		printf("%x ", p[i]);
+	}
+	printf(" (%ld)\n", reportlen);
+	
+	//	for (int i=0; i<MAX_TOUCHES; i++)
+	//	{
+	//		if (touchData.touched[i]) {
+	//			printf("id[%d] = %dx%d\n", i, touchData.x[i], touchData.y[i]);
+	//		}
+	//	}
+	
+
+#endif
+	
+//	switch (appDelegate->frameType) {
+//		case ZENITH_IKIT_FRAME:
+//			if(reportlen != 64 || p[0] != 0x0f || p[reportlen - 1] == 0x00){
+//				return; // not a multitouch report
+//			}
+//			break;
+//			
+//		case OFFICE_IKIT_FRAME:
+//			if(reportlen != 64 || p[0] != 0x0f /* || p[reportlen - 1] == 0x00*/){
+//				return; // not a multitouch report
+//			}
+//			break;
+//	}
+	
+	// skip report ID
+	p = p + 1;		// should be 13 for touch
+	
+	int nEvents = 0;
+	while (p[0] == 7 || p[0] == 4) {
+		if (++nEvents > 6) {
+			// max of 6 events per packet
+			break;
+		}
+		
+		if (p[0] == 7) {
+			// touch down/moved
+			int tid = p[1];
+			int x = p[3] << 8 | p[2];
+			int y = p[5] << 8 | p[4];
+			touchData.x[tid] = x;
+			touchData.y[tid] = y;
+			touchData.touched[tid] = true;
+		}
+		else if (p[0] == 4) {
+			// touch up
+			int tid = p[1];
+			touchData.touched[tid] = false;
+		}
+		
+		p+=10;
+	}
+
+	
 	[appDelegate touchesUpdated: &touchData]; //let the app know!
 }
 
@@ -172,8 +251,11 @@ BOOL HIDSetup(void){
 			CFStringRef tCFStringRef = Copy_DeviceName(tIOHIDDeviceRef);
 			NSLog(@"dev[%ld]: %@\n", idx, tCFStringRef);
 
+			long inputSize = Device_GetInputSize(tIOHIDDeviceRef);
 			// match Baanto interface
-			if(CFStringFind(tCFStringRef, CFSTR("Baanto"), 0).location != kCFNotFound){
+//			if(CFStringFind(tCFStringRef, CFSTR("Baanto"), 0).location != kCFNotFound){
+			if(CFStringFind(tCFStringRef, CFSTR("3M MicroTouch"), 0).location != kCFNotFound &&
+			   inputSize == 64){
 				gCurrentIOHIDDeviceRef = tIOHIDDeviceRef;
 				NSLog(@" - matched\n");
 			}
@@ -196,7 +278,7 @@ BOOL HIDSetup(void){
 	uint8_t * report = (uint8_t *)malloc(reportSize);
 
 	IOHIDDeviceRegisterInputReportCallback(gCurrentIOHIDDeviceRef, report, reportSize,
-		Handle_IOInputReport, (void *)gCurrentIOHIDDeviceRef);
+		Handle_3M_IOInputReport, (void *)gCurrentIOHIDDeviceRef);
 
 	// add HIDManager to Cocoa run loop so we get callbacks
 	IOHIDManagerScheduleWithRunLoop(gIOHIDManagerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
