@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		BB3DF6C218DFB3F20032708D /* HIDView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BB3DF6C118DFB3F20032708D /* HIDView.mm */; };
+		BB4952911979730200E3BA9A /* XmlReader.m in Sources */ = {isa = PBXBuildFile; fileRef = BB49528E1979730200E3BA9A /* XmlReader.m */; };
+		BB4952921979730200E3BA9A /* ProwlKit.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4952901979730200E3BA9A /* ProwlKit.m */; };
 		BB51217D18DBD45C00A0AAEE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB51217C18DBD45C00A0AAEE /* Cocoa.framework */; };
 		BB51218718DBD45C00A0AAEE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BB51218518DBD45C00A0AAEE /* InfoPlist.strings */; };
 		BB51218918DBD45C00A0AAEE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BB51218818DBD45C00A0AAEE /* main.m */; };
@@ -45,6 +47,10 @@
 /* Begin PBXFileReference section */
 		BB3DF6C018DFB3F20032708D /* HIDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDView.h; sourceTree = "<group>"; };
 		BB3DF6C118DFB3F20032708D /* HIDView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDView.mm; sourceTree = "<group>"; };
+		BB49528D1979730200E3BA9A /* XmlReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlReader.h; sourceTree = "<group>"; };
+		BB49528E1979730200E3BA9A /* XmlReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlReader.m; sourceTree = "<group>"; };
+		BB49528F1979730200E3BA9A /* ProwlKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProwlKit.h; sourceTree = "<group>"; };
+		BB4952901979730200E3BA9A /* ProwlKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProwlKit.m; sourceTree = "<group>"; };
 		BB51217918DBD45C00A0AAEE /* iKit2Tuio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iKit2Tuio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB51217C18DBD45C00A0AAEE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BB51217F18DBD45C00A0AAEE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -139,10 +145,22 @@
 		BB3DF6BF18DFB3040032708D /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				BB49528C197972F800E3BA9A /* ProwlKit */,
 				BB74103118DF9CFE00AC79F7 /* ofxTuioWrapper */,
 				BB740F9018DF95E400AC79F7 /* ofxOsc */,
 			);
 			name = libs;
+			sourceTree = "<group>";
+		};
+		BB49528C197972F800E3BA9A /* ProwlKit */ = {
+			isa = PBXGroup;
+			children = (
+				BB49528D1979730200E3BA9A /* XmlReader.h */,
+				BB49528E1979730200E3BA9A /* XmlReader.m */,
+				BB49528F1979730200E3BA9A /* ProwlKit.h */,
+				BB4952901979730200E3BA9A /* ProwlKit.m */,
+			);
+			name = ProwlKit;
 			sourceTree = "<group>";
 		};
 		BB51217018DBD45C00A0AAEE = {
@@ -452,6 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB740FC418DF95E400AC79F7 /* ofxOscBundle.cpp in Sources */,
+				BB4952921979730200E3BA9A /* ProwlKit.m in Sources */,
 				BB740FC618DF95E400AC79F7 /* ofxOscReceiver.cpp in Sources */,
 				BB740FBB18DF95E400AC79F7 /* NetworkingUtils.cpp in Sources */,
 				BB3DF6C218DFB3F20032708D /* HIDView.mm in Sources */,
@@ -471,6 +490,7 @@
 				BB740FBA18DF95E400AC79F7 /* IpEndpointName.cpp in Sources */,
 				BB740FBC18DF95E400AC79F7 /* UdpSocket.cpp in Sources */,
 				BB7E853118FD78FF00F31618 /* calibrate.cpp in Sources */,
+				BB4952911979730200E3BA9A /* XmlReader.m in Sources */,
 				BB740FC718DF95E400AC79F7 /* ofxOscSender.cpp in Sources */,
 				BB740FBF18DF95E400AC79F7 /* OscOutboundPacketStream.cpp in Sources */,
 				BB51218918DBD45C00A0AAEE /* main.m in Sources */,
@@ -584,6 +604,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/oriol/Desktop/ProwlKit-master/Build/Products/Release",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "src/iKit2Tuio-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -610,6 +634,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/oriol/Desktop/ProwlKit-master/Build/Products/Release",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "src/iKit2Tuio-Prefix.pch";
 				HEADER_SEARCH_PATHS = (

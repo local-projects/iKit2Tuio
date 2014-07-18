@@ -25,7 +25,7 @@ gitDate="Unknown Date"
 fi
 
 
-getInfoString=$(echo -e "v$gitCommitNum $gitCommitHash\n$gitAuthor\n$gitDate$gitIsDirty");
+getInfoString=$(echo -e "v$gitCommitNum $gitCommitHash\n$gitAuthor\n$gitDate\n$gitBranch$gitIsDirty");
 copyright=$(echo "LocalProjects © $year")
 
 defaults write "${TARGET_BUILD_DIR}/$INFOPLIST_PATH" "CFBundleShortVersionString" -string "$getInfoString"

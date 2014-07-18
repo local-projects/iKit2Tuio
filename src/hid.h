@@ -8,6 +8,7 @@
 
 #include "TouchDataStruct.h"
 
+
 BOOL HIDSetup(void);
 struct TouchData* getCoords(void);
 
