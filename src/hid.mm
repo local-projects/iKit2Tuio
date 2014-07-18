@@ -133,7 +133,6 @@ static void hid_device_removal_callback(void *context, IOReturn result,
                                         void *sender){
 	IOHIDDeviceRef dev = (IOHIDDeviceRef) context;
 	NSLog(@"device disconnected!");
-	332c105bbefe4914c9a14bba4162b9430f1de1b5
 }
 
 
