@@ -1,2 +1,0 @@
-ofxTuioWrapper
-ofxOsc
