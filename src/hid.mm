@@ -154,7 +154,7 @@ BOOL HIDSetup(void){
 	CFSetRef devCFSetRef;
 	CFStringRef tCFStringRef;
 	IOReturn tIOReturn;
-	BOOL ret;
+	BOOL ret = TRUE;
 
 	for(int i = 0; i < MAX_TOUCHES; i++){
 		touchData.touched[i] = false;
@@ -234,7 +234,7 @@ BOOL HIDSetup(void){
 	notifyAndExit:
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	NSString * msg = [NSString stringWithFormat:@"Starting and device is %@. %@ %@", ret ? @"OK" : @"KO",  [[NSHost currentHost] name], [NSDate date]];
+	NSString * msg = [NSString stringWithFormat:@"Device is %@ at startup. %@ %@", ret ? @"OK" : @"KO",  [[NSHost currentHost] name], [NSDate date]];
 	BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
 										forApplication:@"iKit2Tuio"
 												 event:nil
