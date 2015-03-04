@@ -152,7 +152,7 @@ BOOL HIDSetup(void){
 		touchData.touched[i] = false;
 	}
 
-	appDelegate = [NSApp delegate];
+	appDelegate = (AppDelegate*)[NSApp delegate];
 	IOHIDManagerRef gIOHIDManagerRef;
 
 	// create the manager

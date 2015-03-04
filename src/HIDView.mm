@@ -30,7 +30,7 @@
 	calibrating = false;
 
 	NSArray * objs = [NSArray  arrayWithObjects:
-		[[NSFontManager sharedFontManager] fontWithFamily:@"helvetica" traits:nil weight:7 size:40],
+		[[NSFontManager sharedFontManager] fontWithFamily:@"helvetica" traits:0 weight:7 size:40],
 		[NSColor whiteColor],
 		nil
 		];
