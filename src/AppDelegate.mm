@@ -16,14 +16,21 @@
 
 
 #ifdef NO_IKIT_DEBUG
-float x = 200;
-float y = 200;
+float x = DRIVER_RESOLUTION / 2;
+float y = DRIVER_RESOLUTION / 2;
 #endif
 
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification{
+
+	[[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityIdleSystemSleepDisabled | NSActivityLatencyCritical | NSActivityUserInitiated
+												   reason:@"touch latency"];
+
+	//make sure the app doesnt nap
+	[[NSUserDefaults standardUserDefaults] setBool: true forKey:@"NSAppSleepDisabled"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
 
 	for(int i = 0; i < MAX_TOUCHES; i++){
 		cursors[i] = NULL;
@@ -40,6 +47,7 @@ float y = 200;
 	fullScreenWindow = nil;
 
 	NSLog(@"Integer Math in %d bits",  8 * (int)sizeof(long) );
+
 }
 
 
@@ -90,6 +98,8 @@ float y = 200;
 	[debugView setDrawCalibratedOutput:YES];
 }
 
+
+static int counter = 0;
 
 -(void)touchesUpdated:(struct TouchData*)data{
 
@@ -148,10 +158,28 @@ float y = 200;
 	}
 
 #else
+
 		//update our fake finger touch
 		x += 10;
 		if (x > DRIVER_RESOLUTION) x = 0;
+
 		server.updateCursor(cursors[0],x,y);
+
+		//fake touch down and drag and up
+		int t = counter%5;
+		if (t == 1){
+			cursors[1] = server.addCursor(x, y + 500);
+		}
+
+		if (t > 1 && t < 3){
+			server.updateCursor(cursors[1],x,y + 500);
+		}
+		if (t == 4){
+			server.removeCursor(cursors[1]);
+		}
+
+		counter++;
+
 #endif
 
 	if([debugWindow isVisible] || fullScreenWindow != nil){
@@ -193,7 +221,7 @@ float y = 200;
 	//debug
 	#ifdef NO_IKIT_DEBUG
 	cursors[0] = server.addCursor(x,y); //add one fake touch, update over time
-	[NSTimer scheduledTimerWithTimeInterval:1./15 target:self selector:@selector(touchesUpdated:) userInfo:nil repeats:YES];
+	[NSTimer scheduledTimerWithTimeInterval:1./60. target:self selector:@selector(touchesUpdated:) userInfo:nil repeats:YES];
 	#endif
 }
 

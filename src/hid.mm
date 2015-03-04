@@ -148,6 +148,14 @@ static void hid_device_removal_callback(void *context, IOReturn result,
 
 BOOL HIDSetup(void){
 
+	CFIndex reportSize = 256;
+	CFIndex idx, cnt;
+	uint8_t * report;
+	CFSetRef devCFSetRef;
+	CFStringRef tCFStringRef;
+	IOReturn tIOReturn;
+	BOOL ret;
+
 	for(int i = 0; i < MAX_TOUCHES; i++){
 		touchData.touched[i] = false;
 	}
@@ -159,21 +167,24 @@ BOOL HIDSetup(void){
 	gIOHIDManagerRef = IOHIDManagerCreate(kCFAllocatorDefault, 0L);
 	if(!gIOHIDManagerRef){
 		NSLog(@"IOHIDManagerCreate failed");
-		return NO;
+		ret = NO;
+		goto notifyAndExit;
 	}
 
-	IOReturn tIOReturn = IOHIDManagerOpen(gIOHIDManagerRef, 0L);
+	tIOReturn = IOHIDManagerOpen(gIOHIDManagerRef, 0L);
 	if(kIOReturnSuccess != tIOReturn){
 		NSLog(@"Couldn’t open IOHIDManager.");
-		return NO;
+		ret = NO;
+		goto notifyAndExit;
 	}
 
 	// get device list
 	IOHIDManagerSetDeviceMatching(gIOHIDManagerRef, NULL);
-	CFSetRef devCFSetRef = IOHIDManagerCopyDevices(gIOHIDManagerRef);
+	devCFSetRef = IOHIDManagerCopyDevices(gIOHIDManagerRef);
 	if(!devCFSetRef){
 		NSLog(@"IOHIDManagerCopyDevices failed");
-		return NO;
+		ret = NO;
+		goto notifyAndExit;
 	}
 
 	gDeviceCFArrayRef = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
@@ -181,11 +192,11 @@ BOOL HIDSetup(void){
 
 	NSLog(@"## Device List ##################");
 	// list and match devices
-	CFIndex idx, cnt = CFArrayGetCount(gDeviceCFArrayRef);
+	cnt = CFArrayGetCount(gDeviceCFArrayRef);
 	for(idx = 0; idx < cnt; idx++){
 		IOHIDDeviceRef tIOHIDDeviceRef = (IOHIDDeviceRef)CFArrayGetValueAtIndex(gDeviceCFArrayRef, idx);
 		if(tIOHIDDeviceRef){
-			CFStringRef tCFStringRef = Copy_DeviceName(tIOHIDDeviceRef);
+			tCFStringRef = Copy_DeviceName(tIOHIDDeviceRef);
 			NSLog(@"dev[%ld]: %@\n", idx, tCFStringRef);
 
 			// match Baanto interface
@@ -199,7 +210,8 @@ BOOL HIDSetup(void){
 
 	if(!gCurrentIOHIDDeviceRef){
 		NSLog(@"no device matched! You will not get TUIO events");
-		return NO;
+		ret = NO;
+		goto notifyAndExit;
 	}
 
 	// empty touches array
@@ -208,8 +220,7 @@ BOOL HIDSetup(void){
 	}
 
 	// register callback
-	CFIndex reportSize = 256;
-	uint8_t * report = (uint8_t *)malloc(reportSize);
+	report = (uint8_t *)malloc(reportSize);
 
 	IOHIDDeviceRegisterRemovalCallback(gCurrentIOHIDDeviceRef, hid_device_removal_callback, (void *)gCurrentIOHIDDeviceRef);
 
@@ -219,7 +230,21 @@ BOOL HIDSetup(void){
 	// add HIDManager to Cocoa run loop so we get callbacks
 	IOHIDManagerScheduleWithRunLoop(gIOHIDManagerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 
-	return YES;
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	notifyAndExit:
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	NSString * msg = [NSString stringWithFormat:@"Starting and device is %@. %@ %@", ret ? @"OK" : @"KO",  [[NSHost currentHost] name], [NSDate date]];
+	BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
+										forApplication:@"iKit2Tuio"
+												 event:nil
+											   withURL:nil
+												forKey:@"332c105bbefe4914c9a14bba4162b9430f1de1b5"
+											  priority:ProwlPriorityNormal
+												 error:nil];
+
+
+	return ret;
 }
 
 

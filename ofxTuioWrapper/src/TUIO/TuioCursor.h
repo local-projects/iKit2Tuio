@@ -25,6 +25,9 @@
 #include <math.h>
 #include "TuioContainer.h"
 
+static int numC = 0;
+
+
 namespace TUIO {
 	
 	/**
@@ -40,8 +43,10 @@ namespace TUIO {
 		 * The individual cursor ID number that is assigned to each TuioCursor.
 		 */ 
 		int cursor_id;
+
 		
 	public:
+
 		/**
 		 * This constructor takes a TuioTime argument and assigns it along with the provided 
 		 * Session ID, Cursor ID, X and Y coordinate to the newly created TuioCursor.
@@ -54,6 +59,7 @@ namespace TUIO {
 		 */
 		TuioCursor (TuioTime ttime, long si, int ci, float xp, float yp):TuioContainer(ttime,si,xp,yp) {
 			cursor_id = ci;
+			numC++;
 		};
 
 		/**
@@ -82,7 +88,7 @@ namespace TUIO {
 		/**
 		 * The destructor is doing nothing in particular. 
 		 */
-		~TuioCursor(){};
+		~TuioCursor(){numC--;};
 		
 		/**
 		 * Returns the Cursor ID of this TuioCursor.
@@ -91,6 +97,10 @@ namespace TUIO {
 		int getCursorID() {
 			return cursor_id;
 		};
+
+
 	};
 };
+
+
 #endif
