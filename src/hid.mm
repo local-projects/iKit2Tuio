@@ -136,13 +136,13 @@ static void hid_device_removal_callback(void *context, IOReturn result,
 	NSLog(@"device disconnected!");
 
 	NSString * msg = [NSString stringWithFormat:@"Device Disconnected! %@ %@", [[NSHost currentHost] name], [NSDate date]];
-	BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
+	/*BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
 										forApplication:@"iKit2Tuio"
 												 event:nil
 											   withURL:nil
 												forKey:@"332c105bbefe4914c9a14bba4162b9430f1de1b5"
 											  priority:ProwlPriorityNormal
-												 error:nil];
+												 error:nil];*/
 }
 
 
@@ -235,13 +235,13 @@ BOOL HIDSetup(void){
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	NSString * msg = [NSString stringWithFormat:@"Device is %@ at startup. %@ %@", ret ? @"OK" : @"KO",  [[NSHost currentHost] name], [NSDate date]];
-	BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
+/*	BOOL success = [[ProwlKit sharedProwl] sendMessage:msg
 										forApplication:@"iKit2Tuio"
 												 event:nil
 											   withURL:nil
 												forKey:@"332c105bbefe4914c9a14bba4162b9430f1de1b5"
 											  priority:ProwlPriorityNormal
-												 error:nil];
+												 error:nil];*/
 
 
 	return ret;

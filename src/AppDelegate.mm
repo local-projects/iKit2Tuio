@@ -143,15 +143,15 @@ static int counter = 0;
 			data->yCal[i] = (int)p.y;
 			if(cursors[i] == NULL){
 				cursors[i] = server.addCursor(p.x, p.y);
-				//NSLog(@"add cursor %d (%d)", i, cursors[i]->getCursorID());
+				NSLog(@"add cursor %d (%d)", i, cursors[i]->getCursorID());
 			}else{
 				server.updateCursor(cursors[i], p.x, p.y);
-				//NSLog(@"update cursor %d (%d)", i, cursors[i]->getCursorID());
+				NSLog(@"update cursor %d (%d)", i, cursors[i]->getCursorID());
 			}
 		}else{
 			if (cursors[i] != NULL){
 				server.removeCursor(cursors[i]);
-				//NSLog(@"remove cursor %d (%d)", i, cursors[i]->getCursorID());
+				NSLog(@"remove cursor %d (%d)", i, cursors[i]->getCursorID());
 				cursors[i] = NULL;
 			}
 		}
@@ -362,7 +362,7 @@ static int counter = 0;
 		NSScreen * s = [screens objectAtIndex:i];
 		NSRect f = [s frame];
 		total = NSUnionRect(total, f);
-		//NSLog(@"Rect %@", NSStringFromRect(total));
+		NSLog(@"Rect %@", NSStringFromRect(total));
 	}
 
 	//total = [[NSScreen mainScreen] frame]; //test debug
