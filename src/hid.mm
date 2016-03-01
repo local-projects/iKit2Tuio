@@ -92,25 +92,28 @@ static void Handle_IOInputReport(void * inContext, IOReturn inResult, void * inS
 
 	#if DEBUG_USB_DATA
 		//print whole report
+    printf("usb: ");
 		for(int i = 0; i < reportlen; i++){
 			printf("%x", p[i]);
 		}
 		printf("\n");
 	#endif
 
-	switch (appDelegate->frameType) {
-		case ZENITH_IKIT_FRAME:
-			if(reportlen != 64 || p[0] != 0x0f || p[reportlen - 1] == 0x00){
-				return; // not a multitouch report
-			}
-			break;
-
-		case OFFICE_IKIT_FRAME:
-			if(reportlen != 64 || p[0] != 0x0f /* || p[reportlen - 1] == 0x00*/){
-				return; // not a multitouch report
-			}
-			break;
-	}
+//	switch (appDelegate->frameType) {
+//		case ZENITH_IKIT_FRAME:
+//			if(reportlen != 64 || p[0] != 0x0f || p[reportlen - 1] == 0x00){
+//                printf("Not a ZENITH frame.\n");
+//				return; // not a multitouch report
+//			}
+//			break;
+//
+//		case OFFICE_IKIT_FRAME:
+//			if(reportlen != 64 || p[0] != 0x0f /* || p[reportlen - 1] == 0x00*/){
+//                printf("Not an OFFICE frame.\n");
+//				return; // not a multitouch report
+//			}
+//			break;
+//	}
 
 	// skip report ID
 	p = p + 1;
@@ -122,11 +125,15 @@ static void Handle_IOInputReport(void * inContext, IOReturn inResult, void * inS
 
 		touchData.x[i] = x;
 		touchData.y[i] = y;
+        
+        printf("touchData: %x,%x\n", x, y);
+        
 		//touchData.thick[i] = thick;
 		touchData.touched[i] = (x != (4095)); // x=y=4095 if no touch
 		p += 6;
 	}
 
+    printf("Sending touchesUpdated with new touchData.\n");
 	[appDelegate touchesUpdated: &touchData]; //let the app know!
 }
 

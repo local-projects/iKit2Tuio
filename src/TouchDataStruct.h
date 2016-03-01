@@ -11,7 +11,7 @@
 
 //define this line below when no ikit is present
 //#define NO_IKIT_DEBUG
-#define DEBUG_USB_DATA		false /*print on stdout*/
+#define DEBUG_USB_DATA		true /*print on stdout*/
 
 enum FrameType{
 	ZENITH_IKIT_FRAME = 0,
